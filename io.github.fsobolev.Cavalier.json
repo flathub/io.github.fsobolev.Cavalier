@@ -1,71 +1,93 @@
 {
     "app-id" : "io.github.fsobolev.Cavalier",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "43",
+    "runtime-version" : "44",
     "sdk" : "org.gnome.Sdk",
-    "command" : "cavalier",
-    "finish-args" : [
-        "--share=ipc",
-        "--socket=wayland",
-        "--socket=fallback-x11",
-        "--socket=pulseaudio",
-        "--device=dri"
+    "sdk-extensions": [
+        "org.freedesktop.Sdk.Extension.dotnet7"
     ],
-    "cleanup" : [
+    "build-options": {
+        "append-path": "/usr/lib/sdk/dotnet7/bin",
+        "append-ld-library-path": "/usr/lib/sdk/dotnet7/lib",
+        "env": {
+            "PKG_CONFIG_PATH": "/app/lib/pkgconfig:/app/share/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib/sdk/dotnet7/lib/pkgconfig"
+        }
+    },
+    "command" : "/app/bin/org.nickvision.cavalier",
+    "finish-args":[
+        "--socket=fallback-x11",
+        "--socket=wayland",
+        "--socket=pulseaudio",
+        "--device=dri",
+        "--share=ipc"
+    ],
+    "cleanup":[
         "/include",
         "/lib/pkgconfig",
-        "/man",
-        "/share/doc",
-        "/share/gtk-doc",
-        "/share/man",
-        "/share/pkgconfig",
-        "*.la",
         "*.a"
     ],
     "modules" : [
-	      "shared-modules/linux-audio/fftw3f.json",
-	      {
-	          "name" : "iniparser",
-	          "buildsystem" : "simple",
-	          "build-commands" :
-	            	[
-	            	    "make PREFIX=/app",
-	            	    "install -Dm0644 src/iniparser.h /app/include/iniparser.h",
-	            	    "install -Dm0644 src/dictionary.h /app/include/dictionary.h",
-	            	    "install -Dm0644 libiniparser.so.1 /app/lib/libiniparser.so.1",
-	            	    "ln -sf libiniparser.so.1 /app/lib/libiniparser.so"
-	            	],
-	          "sources" : [
-	              {
-	                  "type" : "git",
-	                  "url" : "https://github.com/ndevilla/iniparser.git",
-	                  "commit" : "deb85ad4936d4ca32cc2260ce43323d47936410d"
-	              }
-	          ]
-	      },
-	      {
-	          "name" : "cava",
-	          "buildsystem" : "autotools",
-	          "sources" : [
-	            	{
-	            	    "type" : "git",
-	            	    "url" : "https://github.com/karlstav/cava.git",
-	            	    "tag" : "0.8.3",
-	            	    "commit" : "746a3b1e6021e383aea9d0000f49d71fb24e1856"
-	            	}
-	          ]
-	      },
-	      {
-            "name" : "cavalier",
-            "builddir" : true,
-            "buildsystem" : "meson",
+        "shared-modules/linux-audio/fftw3f.json",
+        {
+            "name" : "iniparser",
+            "buildsystem" : "simple",
+            "build-commands" :
+            [
+                "make PREFIX=/app",
+                "install -Dm0644 src/iniparser.h /app/include/iniparser.h",
+                "install -Dm0644 src/dictionary.h /app/include/dictionary.h",
+                "install -Dm0644 libiniparser.so.1 /app/lib/libiniparser.so.1",
+                "ln -sf libiniparser.so.1 /app/lib/libiniparser.so"
+            ],
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "https://github.com/fsobolev/cavalier.git",
-                    "commit": "e513d4ed3200dcae897903c9d690c1bafaac8a47"
+                    "url" : "https://github.com/ndevilla/iniparser.git",
+                    "commit" : "deb85ad4936d4ca32cc2260ce43323d47936410d"
                 }
             ]
-	      }
+        },
+        {
+            "name" : "cava",
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://github.com/karlstav/cava.git",
+                    "tag" : "0.8.3",
+                    "commit" : "746a3b1e6021e383aea9d0000f49d71fb24e1856"
+                }
+            ]
+        },
+        {
+            "name": "blueprint-compiler",
+            "buildsystem": "meson",
+            "cleanup": [ "*" ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/jwestman/blueprint-compiler",
+                    "tag": "v0.6.0",
+                    "commit": "9adcab2d225fd6435edc85c72a0b67e33880e00b"
+                }
+            ]
+        },
+        {
+            "name": "org.nickvision.cavalier",
+            "buildsystem": "simple",
+            "build-commands": [
+                "chmod +x ./flatpak/build.sh",
+                "./flatpak/build.sh gnome"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/NickvisionApps/Cavalier.git",
+                    "branch": "beta",
+                    "commit": "67ba7d61bff72e2f10022140d390c2ea41594317"
+                },
+                "cake.json",
+                "nuget-sources.json"
+            ]
+        }
     ]
 }
