@@ -83,7 +83,7 @@
                     "type": "git",
                     "url": "https://github.com/NickvisionApps/Cavalier.git",
                     "branch": "flathub",
-                    "commit": "4e9e7456442be1f7b4a28f3fd8d71a1eeaf20a16"
+                    "commit": "8268a88f1da1c8daf40e5c528462905b6f85411a"
                 },
                 "cake.json",
                 "nuget-sources.json"
